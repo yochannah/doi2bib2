@@ -12,7 +12,9 @@ function getDomain() {
   }
 }
 
-const BIB = '/bib/';
+const BIB = '/bib?';
+
+var myTest = [];
 
 class Doi2Bib extends Component {
   constructor(props) {
@@ -22,7 +24,8 @@ class Doi2Bib extends Component {
       doiInUrl = props.location.pathname.substring(BIB.length);
     }
     this.state = {
-      value: doiInUrl
+      value: doiInUrl,
+      bibs : []
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -40,7 +43,11 @@ class Doi2Bib extends Component {
   }
 
   handleChange(event) {
-    this.setState({value: event.target.value});
+    var _this = this;
+    this.setState(
+      {value: event.target.value,
+      bibs : _this.bibs}
+    );
   }
 
   handleKeyPress(event) {
@@ -75,16 +82,31 @@ class Doi2Bib extends Component {
   copyUrlToClipboard(event) {
     this.copyToCipboard(event, this.state.url);
   }
-
-  generateBib(changeBrowserURL) {
+  generateBib() {
     let idToSend = this.state.value;
+    idToSend = idToSend.split('&');
+    var _this=this;
+    idToSend.map(function(theId, x) {
+      //console.log(theId,x);
+      var finalOne=false;
+      console.log(x, idToSend.length)
+      if (x+1 === idToSend.length)
+      {
+        finalOne=true
+      }
+      _this.generateBibOne(theId, false, finalOne);
+    });
+  }
+
+  generateBibOne(idToSend,changeBrowserURL, finalOne) {
     let url;
 
     this.setState({
       bib: null,
       url: null,
       error: null,
-      workInProgress: true
+      workInProgress: true,
+      bibs: this.bibs
     });
 
     idToSend = idToSend.replace(/ /g, '');
@@ -118,13 +140,19 @@ class Doi2Bib extends Component {
         })
         .then(data => {
           let bib = new Bib(data);
+          myTest.push(bib.toPrettyString());
+          console.log(bib.getURL());
+
+        if (finalOne) {
+           console.log(myTest.length,myTest.join("\n"))
+         }
           this.setState({
             bib: bib.toPrettyString(),
             url: bib.getURL(),
-            workInProgress: false
+            workInProgress: false,
           });
           if (changeBrowserURL) {
-            this.props.history.push('/bib/' + this.state.value);
+          //  this.props.history.push(BIB + this.state.value);
           }
         }, data => {
           this.setState({

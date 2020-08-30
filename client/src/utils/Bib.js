@@ -64,8 +64,8 @@ export default class Bib {
     }
 
     // remove brackets from month
-    console.log(bibStr);
-    console.log(this.bib.tags.month);
+  //  console.log(bibStr);
+  //  console.log(this.bib.tags.month);
   }
 
   toPrettyString() {
