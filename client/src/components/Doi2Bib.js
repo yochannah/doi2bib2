@@ -14,7 +14,7 @@ function getDomain() {
 
 const BIB = '/bib?';
 
-var myTest = [];
+var myTest = {};
 
 class Doi2Bib extends Component {
   constructor(props) {
@@ -140,11 +140,15 @@ class Doi2Bib extends Component {
         })
         .then(data => {
           let bib = new Bib(data);
-          myTest.push(bib.toPrettyString());
+          myTest[idToSend] = bib.toPrettyString();
           console.log(bib.getURL());
 
         if (finalOne) {
-           console.log(myTest.length,myTest.join("\n"))
+           var toPrint = "";
+           Object.keys(myTest).map(function(v,k,x){
+             toPrint += myTest[v] + "\n";
+           })
+           console.log(toPrint, myTest);
          }
           this.setState({
             bib: bib.toPrettyString(),
